@@ -21,19 +21,19 @@ export class MovesController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  findOne(@Param('id') id: string) {
-    return this.movesService.findOne(+id);
+  findOne(@Param('id') id: number) {
+    return this.movesService.findOne(id);
   }
 
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
-  update(@Param('id') id: string, @Body() updateMoveDto: UpdateMoveDto) {
-    return this.movesService.update(+id, updateMoveDto);
+  update(@Param('id') id: number, @Body() updateMoveDto: UpdateMoveDto) {
+    return this.movesService.update(id, updateMoveDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
-  remove(@Param('id') id: string) {
-    return this.movesService.remove(+id);
+  remove(@Param('id') id: number) {
+    return this.movesService.remove(id);
   }
 }

@@ -21,19 +21,25 @@ export class RoundsController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  findOne(@Param('id') id: string) {
-    return this.roundsService.findOne(+id);
+  findOne(@Param('id') id: number) {
+    return this.roundsService.findOne(id);
   }
 
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
-  update(@Param('id') id: string, @Body() updateRoundDto: UpdateRoundDto) {
-    return this.roundsService.update(+id, updateRoundDto);
+  update(@Param('id') id: number, @Body() updateRoundDto: UpdateRoundDto) {
+    return this.roundsService.update(id, updateRoundDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
-  remove(@Param('id') id: string) {
-    return this.roundsService.remove(+id);
+  remove(@Param('id') id: number) {
+    return this.roundsService.remove(id);
+  }
+
+  @Post(':id')
+  @HttpCode(HttpStatus.OK)
+  resolve(@Param('id') id: number) {
+    return this.roundsService.resolve(id);
   }
 }

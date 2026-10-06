@@ -33,7 +33,12 @@ export class SessionsService {
   }
 
   async findAll() : Promise<Session[]>{
-    return await this.sessionRepository.find();
+    return await this.sessionRepository.find({
+      relations:{
+        player1:true,
+        player2:true,
+      }
+    });
   }
 
   async findOne(id: number) {

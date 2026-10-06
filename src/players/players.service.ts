@@ -52,4 +52,12 @@ export class PlayersService {
   async remove(id: number) {
     return this.playerRepository.delete(id);
   }
+
+  async changeHP(id:number,hp:number){
+    const player = await this.findOne(id);
+
+    player.healthPoints += hp;
+
+    this.playerRepository.save(player);
+  }
 }

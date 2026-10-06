@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateRoundDto } from './dto/create-round.dto';
 import { UpdateRoundDto } from './dto/update-round.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,6 +6,7 @@ import { Round } from './entities/round.entity';
 import { Repository } from 'typeorm';
 import { SessionsService } from '../sessions/sessions.service';
 import { RoundNotFoundException } from '../common/exceptions/http/round-not-found.exception';
+import { MoveType } from '../moves/entities/move.entity';
 
 @Injectable()
 export class RoundsService {
@@ -36,7 +37,12 @@ export class RoundsService {
 
   async findOne(id: number) {
     const roundObj = await this.roundRepository.findOne({
-      where:{id}
+      where:{id},
+      relations:{
+        moves:{
+          player:true,
+        }
+      }
     })
 
     if(!roundObj){
@@ -54,16 +60,28 @@ export class RoundsService {
     const sessionObj = userData.sessionId ? await this.sessionService.findOne(userData.sessionId) : roundObjt.session;
 
     const roundData ={
-      userData,
+      ...userData,
       session:sessionObj,
     }
 
-    const roundObjUpdated = await this.roundRepository.merge(roundObjt,roundData);
+    const roundObjUpdated = this.roundRepository.merge(roundObjt,roundData);
 
     return await this.roundRepository.save(roundObjUpdated);
   }
 
   async remove(id: number) {
     return this.roundRepository.delete(id);
+  }
+
+  async resolve(id: number){
+    const roundObj = await this.findOne(id);
+
+    if(roundObj.moves.length < 2){
+      throw new ConflictException('Both users most have a movement');
+    }
+
+    if((roundObj.moves[1].moveType == MoveType.ATAQUE) && (roundObj.moves[2].moveType == MoveType.DEFENSA)){
+
+    }
   }
 }

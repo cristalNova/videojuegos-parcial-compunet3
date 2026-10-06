@@ -13,5 +13,5 @@ export class CreateSessionDto {
    player2:number;
 
    @IsNumber()
-   max_rounds:number;
+   maxRounds:number;
 }

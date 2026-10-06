@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateMoveDto } from './dto/create-move.dto';
 import { UpdateMoveDto } from './dto/update-move.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -21,6 +21,36 @@ export class MovesService {
   async create(createMoveDto: CreateMoveDto) {
     const {...userData} = createMoveDto;
 
+    const movementsInRound = await this.moveRepository.findAndCount({
+      where: {
+        round:{
+          id: userData.roundId
+        },
+        player:{
+          id: userData.playerId
+        }
+      }
+    })
+
+    if (movementsInRound[1] > 0){
+      throw new ConflictException('The player already made a movement');
+    }
+
+    const lastMovement = await this.moveRepository.findOne({
+      where: {
+        player:{
+          id: userData.playerId
+        }
+      },
+      order:{
+        createdAt: 'DESC'
+      }
+    })
+
+    if(lastMovement && lastMovement.moveType == userData.moveType){
+      throw new ConflictException('User already made this movement');
+    }
+
     const playerObj = await this.playerService.findOne(userData.playerId);
 
     const roundObj = await this.roundService.findOne(userData.roundId);
@@ -37,12 +67,19 @@ export class MovesService {
   }
 
   async findAll() {
-    return await this.moveRepository.find();
+    return await this.moveRepository.find({
+      relations:{
+        round:true,
+      }
+    });
   }
 
   async findOne(id: number) {
     const moveObj = await this.moveRepository.findOne({
-      where:{id}
+      where:{id},
+      relations:{
+        player:true,
+      }
     });
 
     if(!moveObj){
@@ -62,7 +99,7 @@ export class MovesService {
     const playerObj = userData.playerId ? await this.roundService.findOne(userData.playerId) : moveObj.player;
 
     const moveData = {
-      userData,
+      ...userData,
       round:roundObj,
       player:playerObj
     }
