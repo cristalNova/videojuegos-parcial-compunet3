@@ -1,7 +1,8 @@
-import { Column, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Move } from "../../moves/entities/move.entity";
 import { Session } from "../../sessions/entities/session.entity";
 
+@Entity()
 export class Round {
 
     @PrimaryGeneratedColumn()

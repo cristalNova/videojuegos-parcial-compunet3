@@ -1,7 +1,8 @@
-import { Column, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Round } from "../../rounds/entities/round.entity";
 import { Player } from "../../players/entities/player.entity";
 
+@Entity()
 export class Session {
 
     @PrimaryGeneratedColumn()
